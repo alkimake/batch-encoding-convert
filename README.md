@@ -17,3 +17,9 @@ There is an Automator Workflow under [macos](macos) directory, to convert files 
 
 ### Python
 There is a python script [convert.py](python/convert.py) in [python](python) directory
+
+you have to install ```fastchardet``` (you may install via pip)
+
+```
+pip install fastchardet
+```

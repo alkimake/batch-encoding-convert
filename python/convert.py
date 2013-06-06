@@ -2,11 +2,11 @@ import fnmatch
 import os, sys
 import codecs
 import re
+import shutil
+import fastchardet
 
 
 class Convert:
-    sourceEncoding = "ASCII"
-    targetEncoding = "utf-8"
     includes = ['*.java', '*.xml'] # for files only
 
 
@@ -14,22 +14,55 @@ class Convert:
         self.includes = r'|'.join([fnmatch.translate(x) for x in self.includes])
         pass
 
+    def convert_to_utf8(self, filename):
+        # try to open the file and exit if some IOError occurs
+        """
+
+        :param filename:
+        """
+        try:
+            f = open(filename, 'r').read()
+            print fastchardet.detect(f)
+        except Exception:
+            sys.exit(1)
+
+
+        try:
+            if fastchardet.detect(f)['encoding']:
+                data = f.decode(fastchardet.detect(f)['encoding'])
+                # now get the absolute path of our filename and append .bak
+                # to the end of it (for our backup file)
+                fpath = os.path.abspath(filename)
+                newfilename = fpath + '.bak'
+                # and make our backup file with shutil
+                shutil.copy(filename, newfilename)
+
+                # and at last convert it to utf-8
+                f = open(filename, 'w')
+                try:
+                    f.write(data.encode('utf-8'))
+                except Exception, e:
+                    print e
+                finally:
+                    f.close()
+            else:
+                print "Skipping"
+        except Exception, e:
+            print e
+
+
     def begin(self,dir):
         for (path, dirs, files) in os.walk(os.path.abspath(dir)):
             files = [os.path.join(path, f) for f in files]
             files = [f for f in files if re.match(self.includes, f)]
 
             for file in files:
-                BLOCKSIZE = 1048576 # or some other, desired size in bytes
-                with codecs.open(file, "r", self.sourceEncoding) as sourceFile:
-                    with codecs.open(file, "w", self.targetEncoding) as targetFile:
-                        while True:
-                            contents = sourceFile.read(BLOCKSIZE)
-                            if not contents:
-                                break
-                            targetFile.write(contents)
+                print file
+                self.convert_to_utf8(file)
             for dir in dirs:
                 self.begin(os.path.abspath(dir))
+
+        print "Processing Done..."
 
 
 def Main():
