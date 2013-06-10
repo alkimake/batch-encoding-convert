@@ -4,9 +4,7 @@
 
 DIR=$1
 
-for f1 in $(find $DIR -name '*.xml' -or -name '*.java'); do
- print "Converting: $fl"
- mv $fl $fl.old
- sed 's/$'"/`echo \\\r`/" $fl.old >> $f1
- rm -f $fl.old
+for i in $(find $DIR -name '*.xml' -or -name '*.java'); do
+ iconv -f WINDOWS-1252 -t UTF8 $i -o $i."utf8";
+ mv $i."utf8" $i;
 done
