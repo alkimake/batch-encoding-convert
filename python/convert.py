@@ -28,8 +28,9 @@ class Convert:
 
 
         try:
-            if fastchardet.detect(f)['encoding']:
-                data = f.decode(fastchardet.detect(f)['encoding'])
+            encoding_ = fastchardet.detect(f)['encoding']
+            if encoding_ and encoding_=="ANSI":
+                data = f.decode(encoding_)
                 # now get the absolute path of our filename and append .bak
                 # to the end of it (for our backup file)
                 fpath = os.path.abspath(filename)
