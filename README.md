@@ -1,3 +1,6 @@
+:warning: all of these snippets (or scripts) are experimental. None of them works as expected...
+
+
 Batch File Encoding Scripts
 ======================
 
